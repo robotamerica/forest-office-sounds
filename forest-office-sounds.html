@@ -2,167 +2,198 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Forest Office Soundscape</title>
+<title>the office soundscape</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
- 
 <style>
-  body {
-    margin: 0;
-    padding: 0;
-    background: #0b0f0c;
-    color: #e6f2e6;
-    font-family: ui-sans-serif, system-ui, sans-serif;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
+  :root{
+    --bg:#050807;
+    --fg:#e7f9ec;
+    --accent:#3f8f4b;
+    --accent-soft:#214e2a;
   }
-  h1 {
-    font-size: 1.2rem;
-    letter-spacing: 1px;
-    margin-bottom: 1rem;
-    opacity: 0.8;
+  *{ box-sizing:border-box; }
+  html,body{
+    margin:0;
+    padding:0;
+    height:100%;
   }
-  button {
-    padding: 12px 22px;
-    font-size: 1rem;
-    background: #1d3b28;
-    color: #d7ffe0;
-    border: 1px solid #4f7a5b;
-    border-radius: 8px;
-    cursor: pointer;
+  body{
+    background:radial-gradient(circle at top, #102017 0, var(--bg) 55%);
+    color:var(--fg);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    display:flex;
+    align-items:center;
+    justify-content:center;
   }
-  button:hover {
-    background: #295138;
+  .wrap{
+    text-align:center;
+  }
+  button.tree{
+    border:none;
+    background:var(--accent-soft);
+    border-radius:999px;
+    padding:18px 26px;
+    font-size:3.5rem;
+    cursor:pointer;
+    box-shadow:0 14px 40px rgba(0,0,0,.55);
+    transition:transform .15s ease-out, box-shadow .15s ease-out, background .15s ease-out;
+  }
+  button.tree:hover{
+    transform:translateY(-2px) scale(1.03);
+    box-shadow:0 18px 50px rgba(0,0,0,.7);
+    background:#266132;
+  }
+  button.tree:active{
+    transform:translateY(1px) scale(0.98);
+    box-shadow:0 8px 26px rgba(0,0,0,.6);
+  }
+  button.tree.playing{
+    background:#266132;
+    cursor:default;
+    box-shadow:0 10px 32px rgba(0,0,0,.6);
+  }
+  .hint{
+    margin-top:10px;
+    font-size:.8rem;
+    opacity:.5;
   }
 </style>
 
- 
-<script src="https://strudel.cc/strudel.js"></script>
+
+<script src="https://unpkg.com/@strudel/web@latest"></script>
 </head>
 
 <body>
-
-<h1>Forest · Office · Soundscape</h1>
-<button id="start">Start Sound</button>
+<div class="wrap">
+  <button class="tree" id="treeBtn" aria-label="Play forest office soundscape">
+    🌲
+  </button>
+  <div class="hint">tap the tree to start the forest office</div>
+</div>
 
 <script>
 
-document.getElementById("start").addEventListener("click", async () => {
-  await Tone.start();    
-  document.getElementById("start").style.display = "none";
-  startStrudel();
-});
+  initStrudel();
 
-function startStrudel() {
+  const btn = document.getElementById('treeBtn');
+  let started = false;
 
-  setcpm(70/4);
+  btn.addEventListener('click', () => {
+    if (started) return; 
+    started = true;
+    btn.classList.add('playing');
 
-  // Subtle randomizer
-  const drift = (amt=0.1) => x => x.speed(1 + (Math.random()*amt - amt/2));
+    setcpm(70/4);
 
-  // -------------------------------------------------------------
-  //  FOREST
-  // -------------------------------------------------------------
+    const drift = (amt=0.1) => x => x.speed(1 + (Math.random()*amt - amt/2));
 
-  const forestWind =
-    s("wind:0*8 wind:1*4 wind:0*6")
-      .slow(1.5 + Math.random()/2)
-      .gain(0.55 + Math.random()*0.1)
-      .room(0.95)
-      .size(0.98)
-      .cutoff(4000 + Math.random()*2000)
-      .off(1/8, drift(0.2));
+    // -------------------------------------------------------------
+    //  FOREST
+    // -------------------------------------------------------------
 
-  const insects =
-    s("insect*4 ~ insect*2 ~ insect*6 ~")
-      .slow(1.8 + Math.random()*0.6)
-      .degradeBy(0.3 + Math.random()*0.4)
-      .gain(0.35 + Math.random()*0.1)
-      .room(0.9)
-      .size(0.95)
-      .cutoff(5000)
-      .off(1/16, x => x.speed(1.1 + Math.random()*0.3));
+    // Wind cycles
+    const forestWind =
+      s("wind:0*8 wind:1*4 wind:0*6")
+        .slow(1.5 + Math.random()/2)
+        .gain(0.55 + Math.random()*0.1)
+        .room(0.95)
+        .size(0.98)
+        .cutoff(4000 + Math.random()*2000)
+        .off(1/8, drift(0.2));
 
-  const forestHum =
-    s("space:4 ~ space:2 ~")
-      .slow(3 + Math.random())
-      .gain(0.3)
-      .room(0.8)
-      .size(0.9)
-      .cutoff(2500 + Math.random()*500)
-      .off(1/8, drift(0.05));
+    // Insects
+    const insects =
+      s("insect*4 ~ insect*2 ~ insect*6 ~")
+        .slow(1.8 + Math.random()*0.6)
+        .degradeBy(0.3 + Math.random()*0.4)
+        .gain(0.35 + Math.random()*0.1)
+        .room(0.9)
+        .size(0.95)
+        .cutoff(5000)
+        .off(1/16, x => x.speed(1.1 + Math.random()*0.3));
 
-  const distantCrows =
-    s("crow ~ ~ ~ ~ ~ ~ ~")
-      .slow(6 + Math.random()*4)
-      .degradeBy(0.7 + Math.random()*0.3)
-      .gain(0.15 + Math.random()*0.05)
-      .room(0.85)
-      .cutoff(3000)
-      .off(1/16, drift(0.15));
+    // Deep forest hum
+    const forestHum =
+      s("space:4 ~ space:2 ~")
+        .slow(3 + Math.random())
+        .gain(0.3)
+        .room(0.8)
+        .size(0.9)
+        .cutoff(2500 + Math.random()*500)
+        .off(1/8, drift(0.05));
 
-  // -------------------------------------------------------------
-  //  FOREST OFFICE
-  // -------------------------------------------------------------
+    // rare crows
+    const distantCrows =
+      s("crow ~ ~ ~ ~ ~ ~ ~")
+        .slow(6 + Math.random()*4)
+        .degradeBy(0.7 + Math.random()*0.3) 
+        .gain(0.15 + Math.random()*0.05)
+        .room(0.85)
+        .cutoff(3000)
+        .off(1/16, drift(0.15));
 
-  const officeMachinery =
-    s("0 ~1 ~ ~ ~ 2 ~")
-      .bank("xylophone_medium_ff")
-      .slow(2 + Math.random()*2)
-      .gain(0.04 + Math.random()*0.03)
-      .room(0.2)
-      .cutoff(1500 + Math.random()*400)
-      .degradeBy(0.4 + Math.random()*0.4);
+    // -------------------------------------------------------------
+    //  office
+    // -------------------------------------------------------------
 
-  const keyboard =
-    s("hh hh ~ hh ~ rim ~ hh")
-      .bank("AkaiLinn")
-      .fast(1.5 + Math.random()*1)
-      .degradeBy(0.5 + Math.random()*0.3)
-      .gain(0.03 + Math.random()*0.03)
-      .room(0.15)
-      .cutoff(4500 + Math.random()*600)
-      .off(1/8, drift(0.1));
+    // Mechanical hum
+    const officeMachinery =
+      s("0 ~1 ~ ~ ~ 2 ~")
+        .bank("xylophone_medium_ff")
+        .slow(2 + Math.random()*2)
+        .gain(0.04 + Math.random()*0.03)
+        .room(0.2)
+        .cutoff(1500 + Math.random()*400)
+        .degradeBy(0.4 + Math.random()*0.4);
 
-  const notifications =
-    s("<casio:2 numbers:1 jazz:3> ~ ~ ~")
-      .slow(3 + Math.random()*3)
-      .degradeBy(0.5 + Math.random()*0.3)
-      .gain(0.03 + Math.random()*0.03)
-      .room(0.4)
-      .size(0.6)
-      .cutoff(2000 + Math.random()*400)
-      .off(1/16, x => x.speed(1.1 + Math.random()*0.2));
+    // Keyboard taps
+    const keyboard =
+      s("hh hh ~ hh ~ rim ~ hh")
+        .bank("AkaiLinn")
+        .fast(1.5 + Math.random()*1)
+        .degradeBy(0.5 + Math.random()*0.3)
+        .gain(0.03 + Math.random()*0.03)
+        .room(0.15)
+        .cutoff(4500 + Math.random()*600)
+        .off(1/8, drift(0.1));
 
-  const printer =
-    s("metal:1 ~ space:2 ~")
-      .slow(4 + Math.random()*5)
-      .degradeBy(0.6 + Math.random()*0.3)
-      .gain(0.02 + Math.random()*0.02)
-      .room(0.4)
-      .cutoff(2000)
-      .off(1/16, drift(0.2));
+    // Random digital beeps 
+    const notifications =
+      s("<casio:2 numbers:1 jazz:3> ~ ~ ~")
+        .slow(3 + Math.random()*3)
+        .degradeBy(0.5 + Math.random()*0.3)
+        .gain(0.03 + Math.random()*0.03)
+        .room(0.4)
+        .size(0.6)
+        .cutoff(2000 + Math.random()*400)
+        .off(1/16, x => x.speed(1.1 + Math.random()*0.2));
 
-  // -------------------------------------------------------------
-  //  MIX
-  // -------------------------------------------------------------
+    // Printer swells 
+    const printer =
+      s("metal:1 ~ space:2 ~")
+        .slow(4 + Math.random()*5)
+        .degradeBy(0.6 + Math.random()*0.3)
+        .gain(0.02 + Math.random()*0.02)
+        .room(0.4)
+        .cutoff(2000)
+        .off(1/16, drift(0.2));
 
-  stack(
-    forestWind,
-    insects,
-    forestHum,
-    distantCrows,
+    // -------------------------------------------------------------
+    //  MIX
+    // -------------------------------------------------------------
 
-    officeMachinery,
-    keyboard,
-    notifications,
-    printer
-  );
-}
-
+    stack(
+      forestWind,
+      insects,
+      forestHum,
+      distantCrows,
+      officeMachinery,
+      keyboard,
+      notifications,
+      printer
+    );
+  });
 </script>
 </body>
 </html>
