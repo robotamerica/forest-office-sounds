@@ -60,8 +60,7 @@
   }
 </style>
 
-
-<script src="https://unpkg.com/@strudel/web@latest"></script>
+<script src="https://strudel.cc/strudel.js"></script>
 </head>
 
 <body>
@@ -73,16 +72,19 @@
 </div>
 
 <script>
-
-  initStrudel();
-
   const btn = document.getElementById('treeBtn');
   let started = false;
 
-  btn.addEventListener('click', () => {
-    if (started) return; 
+  btn.addEventListener('click', async () => {
+    if (started) return;
     started = true;
     btn.classList.add('playing');
+
+    if (typeof Tone !== "undefined" && Tone.start) {
+      await Tone.start();
+    }
+
+    // ----- STRUDEL PATTERN -----
 
     setcpm(70/4);
 
@@ -123,7 +125,7 @@
         .cutoff(2500 + Math.random()*500)
         .off(1/8, drift(0.05));
 
-    // rare crows
+    // Rare crows
     const distantCrows =
       s("crow ~ ~ ~ ~ ~ ~ ~")
         .slow(6 + Math.random()*4)
@@ -134,7 +136,7 @@
         .off(1/16, drift(0.15));
 
     // -------------------------------------------------------------
-    //  office
+    //  OFFICE
     // -------------------------------------------------------------
 
     // Mechanical hum
