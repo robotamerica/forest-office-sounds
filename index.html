@@ -64,14 +64,13 @@
   <div class="hint">tap the tree to listen</div>
 </div>
 <script>
+  initStrudel();
   const btn=document.getElementById("treeBtn");
   let started=false;
-  btn.addEventListener("click",async()=>{ 
+  btn.addEventListener("click",()=>{ 
     if(started)return;
     started=true;
     btn.classList.add("playing");
-    const env=await initStrudel();
-    const {s,stack,setcpm}=env;
     setcpm(70/4);
     const drift=(amt=0.1)=>x=>x.speed(1+(Math.random()*amt-amt/2));
     const forestWind=
